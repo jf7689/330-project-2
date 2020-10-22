@@ -14,7 +14,6 @@ import * as canvas from './canvas.js';
 const drawParams = {
     showGradient: true,
     showBars: true,
-    showCircles: true,
     showNoise: false,
     showInvert: false,
     showEmboss: false
@@ -105,12 +104,6 @@ function setupUI(canvasElement) {
 
     document.querySelector('#barsCB').onchange = e => {
         drawParams.showBars = e.target.checked;
-    };
-
-    document.querySelector('#circlesCB').checked = drawParams.showCircles;
-
-    document.querySelector('#circlesCB').onchange = e => {
-        drawParams.showCircles = e.target.checked;
     };
 
     document.querySelector('#noiseCB').checked = drawParams.showNoise;
