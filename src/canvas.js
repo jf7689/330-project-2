@@ -10,7 +10,8 @@
 import * as utils from './utils.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
-
+let sihouette = document.querySelector("#citySilhouette");
+let pixelCount = 0;
 
 function setupCanvas(canvasElement, analyserNodeRef) {
   // create drawing context
@@ -18,7 +19,7 @@ function setupCanvas(canvasElement, analyserNodeRef) {
   canvasWidth = canvasElement.width;
   canvasHeight = canvasElement.height;
   // create a gradient that runs top to bottom
-  gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#d8f3dc" }, { percent: .25, color: "#b7e4c7" }, { percent: .5, color: "#95d5b2" }, { percent: .75, color: "#74c69d" }, { percent: 1, color: "#52b788" }]);
+  gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#11001c" }, { percent: .25, color: "#190028" }, { percent: .5, color: "#220135" }, { percent: .75, color: "#32004f" }, { percent: 1, color: "#3a015c" }]);
   // keep a reference to the analyser node
   analyserNode = analyserNodeRef;
   // this is the array where the analyser data will be stored
@@ -35,7 +36,6 @@ function draw(params = {}) {
   // 2 - draw background
   ctx.save();
   ctx.fillStyle = "black";
-  ctx.globalAlpha = .1;
   ctx.fillRect(0, 0, canvasWidth, canvasHeight);
   ctx.restore();
 
@@ -43,31 +43,33 @@ function draw(params = {}) {
   if (params.showGradient) {
     ctx.save();
     ctx.fillStyle = gradient;
-    ctx.globalAlpha = .3;
+    ctx.globalAlpha = .7;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.restore();
   }
 
   // 4 - draw bars
   if (params.showBars) {
-    let barSpacing = 4;
-    let margin = 5;
-    let screenWidthForBars = canvasWidth - (audioData.length * barSpacing) - margin * 2;
-    let barWidth = screenWidthForBars / audioData.length;
-    let barHeight = 200;
-    let topSpacing = 100;
+    let lineGradient = utils.getLinearGradient(ctx, 10, 0, 750, 0, [{ percent: 0, color: "red" }, { percent: 1/6, color: "orange" }, { percent: 2/6, color: "yellow" }, 
+    { percent: 3/6, color: "green" }, { percent: 4/6, color: "aqua" }, { percent: 5/6, color: "blue" }, { percent: 1, color: "pink" }]);
 
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,0.50)';
-    ctx.strokeStyle = 'rgba(0,0,0,0.50)';
+
+    ctx.lineWidth = 20;
+    ctx.strokeStyle = lineGradient;
     // loop through the data and draw!
     for (let i = 0; i < audioData.length; i++) {
-      ctx.fillRect(margin + i * (barWidth + barSpacing), topSpacing + 256 - audioData[i], barWidth, barHeight);
-      ctx.strokeRect(margin + i * (barWidth + barSpacing), topSpacing + 256 - audioData[i], barWidth, barHeight);
+      ctx.beginPath();
+      ctx.moveTo(10 + i * 20, 650 - audioData[i] * 1.5);
+      ctx.lineTo(10 + i * 20, 650);
+      ctx.stroke();
     }
     ctx.restore();
   }
 
+  if (params.showSilhouette) {
+    loopSilhouette(sihouette);
+  }
 
   // 6 - bitmap manipulation
   // TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
@@ -113,6 +115,18 @@ function draw(params = {}) {
   // D) copy image data back to canvas
   ctx.putImageData(imageData, 0, 0);
 
+}
+
+// helper function to loop buildings
+const loopSilhouette = (image) => {
+  if (pixelCount >= 800) {
+    pixelCount = 0;
+  }
+
+  //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)          
+  ctx.drawImage(image, 0, 0, 564, 584, pixelCount, 0, 800, 600); //right
+  ctx.drawImage(image, 0, 0, 564, 584, -800 + pixelCount, 0, 800, 600); //left
+  pixelCount++;
 }
 
 export { setupCanvas, draw };

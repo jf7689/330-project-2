@@ -12,6 +12,7 @@ import * as audio from './audio.js';
 import * as canvas from './canvas.js';
 
 const drawParams = {
+    showSilhouette: true,
     showGradient: true,
     showBars: true,
     showNoise: false,
@@ -30,7 +31,6 @@ function init() {
     console.log(`Testing utils.getRandomColor() import: ${utils.getRandomColor()}`);
     audio.setupWebaudio(DEFAULTS.sound1);
     let canvasElement = document.querySelector("canvas"); // hookup <canvas> element
-
     setupUI(canvasElement);
     canvas.setupCanvas(canvasElement, audio.analyserNode);
     loop();
@@ -93,7 +93,13 @@ function setupUI(canvasElement) {
         }
     }
 
-    // checkboxes for gradient, bars, circles, noise
+    // checkboxes
+    document.querySelector('#silhouetteCB').checked = drawParams.showSilhouette;
+
+    document.querySelector('#silhouetteCB').onchange = e => {
+        drawParams.showSilhouette = e.target.checked;
+    };
+
     document.querySelector('#gradientCB').checked = drawParams.showGradient;
 
     document.querySelector('#gradientCB').onchange = e => {
@@ -129,7 +135,7 @@ function setupUI(canvasElement) {
 function loop() {
     requestAnimationFrame(loop);
     canvas.draw(drawParams);
-
+   
 }
 
 export { init };
