@@ -8,10 +8,17 @@
 */
 
 import * as utils from './utils.js';
+import * as classes from './class.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
+// city silhouette
 let sihouette = document.querySelector("#citySilhouette");
 let pixelCount = 0;
+
+// for stars
+let stars = [];
+let numStars = 50;
+let starRadius = 10;
 
 function setupCanvas(canvasElement, analyserNodeRef) {
   // create drawing context
@@ -24,6 +31,7 @@ function setupCanvas(canvasElement, analyserNodeRef) {
   analyserNode = analyserNodeRef;
   // this is the array where the analyser data will be stored
   audioData = new Uint8Array(analyserNode.fftSize / 2);
+  generateStars();
 }
 
 function draw(params = {}) {
@@ -54,7 +62,6 @@ function draw(params = {}) {
     { percent: 3/6, color: "green" }, { percent: 4/6, color: "aqua" }, { percent: 5/6, color: "blue" }, { percent: 1, color: "pink" }]);
 
     ctx.save();
-
     ctx.lineWidth = 20;
     ctx.strokeStyle = lineGradient;
     // loop through the data and draw!
@@ -72,14 +79,6 @@ function draw(params = {}) {
   }
 
   // 6 - bitmap manipulation
-  // TODO: right now. we are looping though every pixel of the canvas (320,000 of them!), 
-  // regardless of whether or not we are applying a pixel effect
-  // At some point, refactor this code so that we are looping though the image data only if
-  // it is necessary
-
-  // A) grab all of the pixels on the canvas and put them in the `data` array
-  // `imageData.data` is a `Uint8ClampedArray()` typed array that has 1.28 million elements!
-  // the variable `data` below is a reference to that array 
   let imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
   let data = imageData.data;
   let length = data.length;
@@ -123,10 +122,19 @@ const loopSilhouette = (image) => {
     pixelCount = 0;
   }
 
-  //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)          
-  ctx.drawImage(image, 0, 0, 564, 584, pixelCount, 0, 800, 600); //right
-  ctx.drawImage(image, 0, 0, 564, 584, -800 + pixelCount, 0, 800, 600); //left
+  //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+  //right          
+  ctx.drawImage(image, 0, 0, 564, 584, pixelCount, 0, 800, 600); 
+  //left
+  ctx.drawImage(image, 0, 0, 564, 584, -800 + pixelCount, 0, 800, 600); 
   pixelCount++;
+}
+
+const generateStars = () => {
+  for (let i = 0; i < numStars; i++) {
+    let newStar = new classes.Star(ctx, starRadius);
+    stars.push(newStar);
+  }
 }
 
 export { setupCanvas, draw };

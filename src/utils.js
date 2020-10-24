@@ -38,5 +38,14 @@ const goFullscreen = (element) => {
   // .. and do nothing if the method is not supported
 };
 
+const drawCircle = (ctx, x, y, radius, color) => {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
 
-export { makeColor, getRandomColor, getLinearGradient, goFullscreen };
+export { makeColor, getRandomColor, getLinearGradient, goFullscreen, drawCircle };
