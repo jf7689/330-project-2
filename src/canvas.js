@@ -11,9 +11,14 @@ import * as utils from './utils.js';
 import * as classes from './class.js';
 
 let ctx, canvasWidth, canvasHeight, gradient, analyserNode, audioData;
+let frequency = true;
+
 // city silhouette
 let sihouette = document.querySelector("#citySilhouette");
 let pixelCount = 0;
+
+// background choice
+let background;
 
 // for stars
 let stars;
@@ -22,6 +27,7 @@ let starColor = "yellow";
 let starRadius = 10;
 let maxRadius = 1.3;
 let percent = 0;
+let shine = true;
 
 function setupCanvas(canvasElement, analyserNodeRef) {
   // create drawing context
@@ -35,6 +41,14 @@ function setupCanvas(canvasElement, analyserNodeRef) {
   // this is the array where the analyser data will be stored
   audioData = new Uint8Array(analyserNode.fftSize / 2);
 
+  document.querySelector('#frequencyCB').onchange = e => {
+    frequency = true;
+  };
+
+  document.querySelector('#waveformCB').onchange = e => {
+    frequency = false;
+  };
+
   stars = [];
   generateStars();
 
@@ -45,14 +59,22 @@ function setupCanvas(canvasElement, analyserNodeRef) {
   document.querySelector("#starColorSelect").onclick = (e) => {
     starColor = e.target.value;
   }
+  document.querySelector("#gradientSelect").onclick = (e) => {
+    background = e.target.value;
+  }
 }
 
 function draw(params = {}) {
   // 1 - populate the audioData array with the frequency data from the analyserNode
   // notice these arrays are passed "by reference" 
-  analyserNode.getByteFrequencyData(audioData);
   // OR
   //analyserNode.getByteTimeDomainData(audioData); // waveform data
+  if (frequency) { 
+    analyserNode.getByteFrequencyData(audioData); 
+  }
+  else { 
+    analyserNode.getByteTimeDomainData(audioData); 
+  }
 
   // 2 - draw background
   ctx.save();
@@ -62,9 +84,27 @@ function draw(params = {}) {
 
   // 3 - draw gradient
   if (params.showGradient) {
+    if (background == "night") {
+      gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#11001c" }, { percent: .25, color: "#190028" }, 
+      { percent: .5, color: "#220135" }, { percent: .75, color: "#32004f" }, { percent: 1, color: "#3a015c" }]);
+      ctx.save();
+      ctx.globalAlpha = .7;
+      ctx.restore();
+    }
+    if (background == "day") {
+      gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#03045e" }, { percent: .25, color: "#023e8a" }, 
+      { percent: .5, color: "#0077b6" }, { percent: .75, color: "#0096c7" }, { percent: 1, color: "#00b4d8" }]);
+    }
+    if (background == "sunrise") {
+      gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#dc2f02" }, { percent: .25, color: "#e85d04" }, 
+      { percent: .5, color: "#f48c06" }, { percent: .75, color: "#faa307" }, { percent: 1, color: "#ffba08" }]);
+    }
+    if (background == "sunset") {
+      gradient = utils.getLinearGradient(ctx, 0, 0, 0, canvasHeight, [{ percent: 0, color: "#cc444b" }, { percent: .25, color: "#da5552" }, 
+      { percent: .5, color: "#df7373" }, { percent: .75, color: "#e39695" }, { percent: 1, color: "#e4b1ab" }]);
+    }
     ctx.save();
     ctx.fillStyle = gradient;
-    ctx.globalAlpha = .7;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.restore();
   }
@@ -93,6 +133,11 @@ function draw(params = {}) {
     drawStars(percent, numStars);
   }
 
+  if (params.showShine) {
+    shine = !shine;
+  }
+
+
   if (params.showSilhouette) {
     loopSilhouette(sihouette);
   }
@@ -112,7 +157,17 @@ function draw(params = {}) {
       data[i + 1] = 255 - green;  // set blue value?
       data[i + 2] = 255 - blue;   // set green value?
     }
+
+    if (params.showGrayscale) {
+      // get average of everything and set to each individual channel
+      let average = (data[i] + data[i + 1] + data[i + 2]) / 3;
+      data[i] = average + 5;
+      data[i + 1] = average;
+      data[i + 2] = average - 5;
+
+    }
   } // end for
+
 
   if (params.showEmboss) {
     for (let i = 0; i < length; i++) {
@@ -151,18 +206,16 @@ const drawStars = (percent, numStars) => {
   for (let i = 0; i < numStars; i++) {
     // Star radius
     let cirRadius = maxRadius * (percent / 255) * stars[i].radius;
-    
-    ctx.beginPath();
+
     ctx.save();
-    /* if (glow) {
-      // glow effect
-      ctx.shadowBlur = 10;
+    if (shine) {
+      // Give off a glow effect depending on the color
+      ctx.shadowBlur = 15;
       ctx.shadowColor = starColor;
-    } */
+    }
 
     //ctx.fillStyle = starColor;
     utils.drawCircle(ctx, stars[i].x, stars[i].y, cirRadius, starColor);
-    ctx.closePath();
     ctx.restore();
   }
 }

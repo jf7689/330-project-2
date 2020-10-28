@@ -14,16 +14,17 @@ import * as canvas from './canvas.js';
 const drawParams = {
     showSilhouette: true,
     showStars: true,
+    showShine: true,
     showGradient: true,
     showBars: true,
     showInvert: false,
+    showGrayscale: false,
     showEmboss: false
 };
 
-
 // 1 - here we are faking an enumeration
 const DEFAULTS = Object.freeze({
-    sound1: "media/New Adventure Theme.mp3"
+    sound1: "media/peritune-realm-nighttime.mp3"
 });
 
 function init() {
@@ -106,6 +107,12 @@ function setupUI(canvasElement) {
         drawParams.showStars = e.target.checked;
     };
 
+    document.querySelector('#shineCB').checked = drawParams.showShine;
+
+    document.querySelector('#shineCB').onchange = e => {
+        drawParams.showShine = e.target.checked;
+    };
+
     document.querySelector('#gradientCB').checked = drawParams.showGradient;
 
     document.querySelector('#gradientCB').onchange = e => {
@@ -122,6 +129,12 @@ function setupUI(canvasElement) {
 
     document.querySelector('#invertCB').onchange = e => {
         drawParams.showInvert = e.target.checked;
+    };
+
+    document.querySelector('#grayCB').checked = drawParams.showGrayscale;
+
+    document.querySelector('#grayCB').onchange = e => {
+        drawParams.showGrayscale = e.target.checked;
     };
 
     document.querySelector('#embossCB').checked = drawParams.showEmboss;

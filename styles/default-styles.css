@@ -1,5 +1,5 @@
 body {
-	background: #eeeeee;
+	background: #eae2b7;
 	font-family: tahoma, verdana, sans serif;
 }
 
@@ -11,7 +11,14 @@ canvas {
 	background: #fafafa;
 }
 
+h1 {
+  font: bold 30pt 'Amaranth', sans-serif;
+  margin-left: 15%;
+  margin-bottom: 4px;
+}
+
 #controls{
+  font-size: 14pt;
   margin-left: 1rem;
 }
 

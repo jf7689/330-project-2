@@ -3,6 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title>Audio Visualizer</title>
+	<link href="https://fonts.googleapis.com/css2?family=Amaranth&display=swap" rel="stylesheet">
 	<link href="styles/default-styles.css" type="text/css" rel="stylesheet" />
 	<script src="./src/loader.js" type="module"></script>
 </head>
@@ -12,6 +13,8 @@
 		<img id="citySilhouette" src="media/silhouette.png" alt="City Silhouette">
 	</div>
 
+	<h1>Audio Visualizer</h1>
+
 	<canvas width="800" height="600"></canvas>
 	<div id="controls">
 		<section>
@@ -20,9 +23,9 @@
 		
 			<label>Track: 
 				<select id="trackSelect">
-					<option value="media/New Adventure Theme.mp3" selected>New Adventure Theme</option>
-					<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
-					<option value="media/The Picard Song.mp3">The Picard Song</option>
+					<option value="media/New Adventure Theme.mp3">New Adventure Theme</option>
+					<option value="media/peritune-realm-nighttime.mp3" selected>Peritune realm nighttime</option>
+					<option value="media/alexander-nakarada-dreamy-interlude.mp3">Alexander Nakarada dreamy interlude</option>
 				</select>
 			</label>
 		</section>
@@ -32,6 +35,15 @@
 			<span id="volumeLabel">???</span>
 		</section>
 		
+		<div id = "mode">
+            <label id = "radioButton" for="frequencyCB" >Frequency
+                <input type ="radio" name="mode" id="frequencyCB" checked>
+            </label>
+            <label id = "radioButton" for="waveformCB">Waveform
+                <input type="radio" name="mode" id="waveformCB">
+            </label>
+        </div>
+
 		<section>
 			<div id ="stars">
 				<label>Star Color:
@@ -44,6 +56,17 @@
 					</select>   
 				</label>
 			</div>
+			
+			<div id ="gradient">
+				<label>Background Gradient:
+					<select id ="gradientSelect">
+						<option value = "night" selected>Night</option>
+						<option value = "day">Day</option>
+						<option value = "sunrise">Sunrise</option>
+						<option value = "sunset">Sunset</option>
+					</select>   
+				</label>
+			</div>
 
 			<div class = "sliders">
                 <label>Star Radius:
@@ -53,9 +76,11 @@
 			
 			<span><input type="checkbox" id="silhouetteCB"><label for="silhouetteCB">Show City Silhouette</label></span>
 			<span><input type="checkbox" id="starsCB"><label for="starsCB">Stars</label></span>
-			<span><input type="checkbox" id="gradientCB"><label for="gradientCB">Show Gradient</label></span>
+			<span><input type="checkbox" id="shineCB"><label for="shineCB">Star Shine</label></span>
+			<span><input type="checkbox" id="gradientCB"><label for="gradientCB">Show Background Gradient</label></span>
 			<span><input type="checkbox" id="barsCB"><label for="barsCB">Show Bars</label></span>
 			<span><input type="checkbox" id="invertCB"><label for="invertCB">Invert Colors</label></span>
+			<span><input type="checkbox" id="grayCB"><label for="grayCB">Grayscale</label></span>
 			<span><input type="checkbox" id="embossCB"><label for="embossCB">Show Emboss</label></span>
 		  </section>
 	</div>
