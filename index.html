@@ -33,10 +33,28 @@
 		</section>
 		
 		<section>
+			<div id ="stars">
+				<label>Star Color:
+					<select id ="starColorSelect">
+						<option value = "yellow" selected>Yellow</option>
+						<option value ="white">White</option>
+						<option value = "red">Red</option>
+						<option value = "orange">Orange</option>
+						<option value = "#5EBAC9">Blue</option>
+					</select>   
+				</label>
+			</div>
+
+			<div class = "sliders">
+                <label>Star Radius:
+                    <input id="radiusSlider" type="range" min="0.2" max="5" step=".05" value="1.5" />
+                </label>
+			</div>
+			
 			<span><input type="checkbox" id="silhouetteCB"><label for="silhouetteCB">Show City Silhouette</label></span>
+			<span><input type="checkbox" id="starsCB"><label for="starsCB">Stars</label></span>
 			<span><input type="checkbox" id="gradientCB"><label for="gradientCB">Show Gradient</label></span>
 			<span><input type="checkbox" id="barsCB"><label for="barsCB">Show Bars</label></span>
-			<span><input type="checkbox" id="noiseCB"><label for="noiseCB">Show Noise</label></span>
 			<span><input type="checkbox" id="invertCB"><label for="invertCB">Invert Colors</label></span>
 			<span><input type="checkbox" id="embossCB"><label for="embossCB">Show Emboss</label></span>
 		  </section>

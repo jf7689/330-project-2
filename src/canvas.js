@@ -16,9 +16,12 @@ let sihouette = document.querySelector("#citySilhouette");
 let pixelCount = 0;
 
 // for stars
-let stars = [];
+let stars;
 let numStars = 50;
+let starColor = "yellow";
 let starRadius = 10;
+let maxRadius = 1.3;
+let percent = 0;
 
 function setupCanvas(canvasElement, analyserNodeRef) {
   // create drawing context
@@ -31,7 +34,17 @@ function setupCanvas(canvasElement, analyserNodeRef) {
   analyserNode = analyserNodeRef;
   // this is the array where the analyser data will be stored
   audioData = new Uint8Array(analyserNode.fftSize / 2);
+
+  stars = [];
   generateStars();
+
+  // slider
+  document.querySelector('#radiusSlider').onchange = (e) => {
+    maxRadius = e.target.value;
+  }
+  document.querySelector("#starColorSelect").onclick = (e) => {
+    starColor = e.target.value;
+  }
 }
 
 function draw(params = {}) {
@@ -58,14 +71,15 @@ function draw(params = {}) {
 
   // 4 - draw bars
   if (params.showBars) {
-    let lineGradient = utils.getLinearGradient(ctx, 10, 0, 750, 0, [{ percent: 0, color: "red" }, { percent: 1/6, color: "orange" }, { percent: 2/6, color: "yellow" }, 
-    { percent: 3/6, color: "green" }, { percent: 4/6, color: "aqua" }, { percent: 5/6, color: "blue" }, { percent: 1, color: "pink" }]);
+    let lineGradient = utils.getLinearGradient(ctx, 10, 0, 750, 0, [{ percent: 0, color: "red" }, { percent: 1 / 6, color: "orange" }, { percent: 2 / 6, color: "yellow" },
+    { percent: 3 / 6, color: "green" }, { percent: 4 / 6, color: "aqua" }, { percent: 5 / 6, color: "blue" }, { percent: 1, color: "pink" }]);
 
     ctx.save();
     ctx.lineWidth = 20;
     ctx.strokeStyle = lineGradient;
     // loop through the data and draw!
     for (let i = 0; i < audioData.length; i++) {
+      percent += audioData[i];
       ctx.beginPath();
       ctx.moveTo(10 + i * 20, 650 - audioData[i] * 1.5);
       ctx.lineTo(10 + i * 20, 650);
@@ -74,9 +88,15 @@ function draw(params = {}) {
     ctx.restore();
   }
 
+  percent /= audioData.length;
+  if (params.showStars) {
+    drawStars(percent, numStars);
+  }
+
   if (params.showSilhouette) {
     loopSilhouette(sihouette);
   }
+
 
   // 6 - bitmap manipulation
   let imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -86,16 +106,6 @@ function draw(params = {}) {
 
   // B) Iterate through each pixel, stepping 4 elements at a time (which is the RGBA for 1 pixel)
   for (let i = 0; i < length; i += 4) {
-    // C) randomly change every 20th pixel to red
-    if (params.showNoise && Math.random() < .05) {
-      // data[i] is the red channel
-      // data[i+1] is the green channel
-      // data[i+2] is the blue channel
-      // data[i+3] is the alpha channel
-      data[i] = data[i + 1] = data[i + 2] = 0; // zero out the red and green and blue channels
-      data[i] = 255; // make the red channel 100% red
-    } // end if
-
     if (params.showInvert) {
       let red = data[i], green = data[i + 1], blue = data[i + 2];
       data[i] = 255 - red;      // set red value
@@ -124,9 +134,9 @@ const loopSilhouette = (image) => {
 
   //drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   //right          
-  ctx.drawImage(image, 0, 0, 564, 584, pixelCount, 0, 800, 600); 
+  ctx.drawImage(image, 0, 0, 564, 584, pixelCount, 0, 800, 600);
   //left
-  ctx.drawImage(image, 0, 0, 564, 584, -800 + pixelCount, 0, 800, 600); 
+  ctx.drawImage(image, 0, 0, 564, 584, -800 + pixelCount, 0, 800, 600);
   pixelCount++;
 }
 
@@ -136,5 +146,26 @@ const generateStars = () => {
     stars.push(newStar);
   }
 }
+
+const drawStars = (percent, numStars) => {
+  for (let i = 0; i < numStars; i++) {
+    // Star radius
+    let cirRadius = maxRadius * (percent / 255) * stars[i].radius;
+    
+    ctx.beginPath();
+    ctx.save();
+    /* if (glow) {
+      // glow effect
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = starColor;
+    } */
+
+    //ctx.fillStyle = starColor;
+    utils.drawCircle(ctx, stars[i].x, stars[i].y, cirRadius, starColor);
+    ctx.closePath();
+    ctx.restore();
+  }
+}
+
 
 export { setupCanvas, draw };

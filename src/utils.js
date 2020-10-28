@@ -42,7 +42,7 @@ const drawCircle = (ctx, x, y, radius, color) => {
   ctx.save();
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.arc(x, y, radius, 0, Math.PI * 2, false);
   ctx.closePath();
   ctx.fill();
   ctx.restore();

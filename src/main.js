@@ -13,9 +13,9 @@ import * as canvas from './canvas.js';
 
 const drawParams = {
     showSilhouette: true,
+    showStars: true,
     showGradient: true,
     showBars: true,
-    showNoise: false,
     showInvert: false,
     showEmboss: false
 };
@@ -100,6 +100,12 @@ function setupUI(canvasElement) {
         drawParams.showSilhouette = e.target.checked;
     };
 
+    document.querySelector('#starsCB').checked = drawParams.showStars;
+
+    document.querySelector('#starsCB').onchange = e => {
+        drawParams.showStars = e.target.checked;
+    };
+
     document.querySelector('#gradientCB').checked = drawParams.showGradient;
 
     document.querySelector('#gradientCB').onchange = e => {
@@ -110,12 +116,6 @@ function setupUI(canvasElement) {
 
     document.querySelector('#barsCB').onchange = e => {
         drawParams.showBars = e.target.checked;
-    };
-
-    document.querySelector('#noiseCB').checked = drawParams.showNoise;
-
-    document.querySelector('#noiseCB').onchange = e => {
-        drawParams.showNoise = e.target.checked;
     };
 
     document.querySelector('#invertCB').checked = drawParams.showInvert;
